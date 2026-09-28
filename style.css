@@ -1,0 +1,139 @@
+/* Colores como variables: cambiarlos aquí cambia toda la página (tema claro/oscuro) */
+:root{--bg:#eef0ff;--fg:#151533;--card:#fff;--ac:#c98a00;--line:#c9cdf5;--glow:rgba(58,91,255,.25)}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0b0b1e;--fg:#f2f2ff;--card:#161638;--ac:#ffd60a;--line:#2b2b66}
+}
+:root[data-theme="dark"]{--bg:#0b0b1e;--fg:#f2f2ff;--card:#161638;--ac:#ffd60a;--line:#2b2b66}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Trebuchet MS",Verdana,sans-serif;
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+main{max-width:640px;margin:0 auto;padding:8px}
+
+/* ============ MENÚ PRINCIPAL ============ */
+#menuScreen{text-align:center;padding:22px 8px;animation:fadeIn .4s ease}
+.logo{display:flex;justify-content:center;align-items:center;gap:16px;margin:8px 0 2px}
+/* Pac-Man en CSS puro: un círculo amarillo que abre y cierra la boca */
+.pac{width:46px;height:46px;background:#ffd60a;border-radius:50%;
+  filter:drop-shadow(0 0 12px rgba(255,214,10,.55));animation:bite .4s infinite}
+@keyframes bite{
+  0%,100%{clip-path:polygon(0 0,100% 0,100% 32%,50% 50%,100% 68%,100% 100%,0 100%)}
+  50%{clip-path:polygon(0 0,100% 0,100% 47%,50% 50%,100% 53%,100% 100%,0 100%)}}
+.pac.small{width:30px;height:30px}
+.ghosts span{font-size:32px;display:inline-block;animation:bob 1s infinite ease-in-out}
+.ghosts span:nth-child(2){animation-delay:.15s}
+.ghosts span:nth-child(3){animation-delay:.3s}
+.ghosts.small span{font-size:24px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+#menuScreen h1{font-size:34px;margin:8px 0 2px;letter-spacing:1px;line-height:1.1}
+#menuScreen h1 .sub{display:block;color:var(--ac);font-size:22px;letter-spacing:8px;margin-top:2px}
+.tagline{opacity:.8;margin:8px auto 14px;max-width:400px}
+.statsRow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 16px}
+.chip{background:var(--card);border:2px solid var(--line);border-radius:999px;
+  padding:6px 14px;font-size:14px;font-weight:700}
+.menuCard{background:var(--card);border:2px solid var(--line);border-radius:14px;
+  padding:16px;max-width:380px;margin:0 auto;box-shadow:0 6px 24px var(--glow)}
+.menuCard label{display:block;margin:8px 0;text-align:left;font-weight:700}
+.menuCard select{width:100%;margin-top:4px;font-weight:400}
+.menuBtns{display:flex;flex-direction:column;gap:8px;max-width:380px;margin:14px auto 0}
+.rowBtns{display:flex;gap:8px}
+.rowBtns button{flex:1}
+#gameScreen{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ============ CÓMO SE JUEGA ============ */
+.demo{display:flex;align-items:center;justify-content:center;gap:22px;margin:14px 0;
+  background:#05051a;border-radius:10px;padding:18px 12px}
+.pill{background:#111;border:2px solid #ffd60a;border-radius:999px;color:#fff;
+  font-weight:700;font-size:14px;padding:6px 14px;animation:pulse 1.2s infinite}
+@keyframes pulse{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 rgba(255,214,10,0)}
+  50%{transform:scale(1.1);box-shadow:0 0 16px rgba(255,214,10,.55)}}
+.how{list-style:none;padding:0;margin:12px 0;text-align:left;font-size:15px}
+.how li{padding:8px 6px;border-bottom:1px dashed var(--line)}
+.how li:last-child{border-bottom:none}
+
+/* ============ JUEGO ============ */
+/* HUD: marcador superior */
+#hud{display:flex;justify-content:space-between;align-items:center;gap:6px;
+  font-weight:700;font-size:18px;padding:4px 2px}
+#hud span{white-space:nowrap}
+#snd{flex:0 0 auto;padding:4px 10px;cursor:pointer;line-height:1}
+
+/* Enunciado de la pregunta */
+#q{background:var(--card);border:2px solid var(--line);border-radius:10px;
+  padding:8px 12px;margin-bottom:6px;text-align:center;font-size:20px;min-height:58px}
+#q small{display:block;font-size:13px;opacity:.7;font-weight:400}
+#q b{color:var(--ac);font-size:28px;letter-spacing:1px}
+#q i{opacity:.75}
+#q .mini{vertical-align:middle;margin-left:6px}
+
+/* touch-action:none evita que el dedo haga scroll mientras deslizas en el juego */
+canvas{width:100%;height:auto;display:block;border-radius:10px;touch-action:none;
+  background:#05051a;box-shadow:0 4px 24px var(--glow)}
+.hint{font-size:13px;text-align:center;opacity:.75;margin:6px 0}
+
+button,select,input{font:inherit}
+button,select{padding:8px 14px;border-radius:8px;
+  border:2px solid var(--line);background:var(--card);color:var(--fg)}
+button{cursor:pointer;transition:transform .06s ease,filter .15s ease}
+button:hover{filter:brightness(1.1)}
+button:active{transform:scale(.96)}
+button.go{background:var(--ac);color:#111;font-weight:700;border-color:var(--ac)}
+button.go.big{width:100%;font-size:20px;padding:12px;margin-top:8px}
+button.alt{background:transparent;border-style:dashed;opacity:.9}
+button.mini{padding:2px 7px;font-size:13px;border-radius:6px}
+button.danger{background:#ff4757;border-color:#ff4757;color:#fff;font-weight:700}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+
+/* Pantalla superpuesta (pausa, resultados, estudio, cómo se juega) */
+#ov{position:fixed;inset:0;background:rgba(5,5,26,.85);display:none;
+  align-items:center;justify-content:center;padding:12px;z-index:10}
+#box{background:var(--card);border-radius:14px;padding:18px;max-width:480px;width:100%;
+  max-height:90vh;overflow:auto;text-align:center;animation:pop .25s ease}
+#box h2{margin:6px 0}
+#box button{margin:4px 3px}
+.mini-note{font-size:12px;opacity:.7;margin:8px 0 0}
+
+/* Diccionario / modo estudio */
+#stTier{width:48%}
+#stQ{width:48%;padding:8px 10px;border-radius:8px;border:2px solid var(--line);
+  background:var(--card);color:var(--fg)}
+#studyTable{width:100%}
+
+/* Tabla de errores del final */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
+td,th{border-bottom:1px solid var(--line);padding:4px;text-align:left}
+th{opacity:.7}
+.grade{font-size:72px;font-weight:900;color:var(--ac);line-height:1;animation:pop .4s ease}
+
+/* ============ TOASTS BONITOS ============
+   Pildoritas que caen con rebote; color según tipo: ok / bad / info */
+#toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:40;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  pointer-events:none;width:max-content;max-width:94vw}
+.toast{padding:10px 20px;border-radius:999px;font-weight:700;font-size:15px;color:#fff;
+  background:rgba(12,12,40,.93);border:2px solid var(--line);
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
+  animation:toastIn .35s cubic-bezier(.2,.9,.3,1.4);
+  max-width:92vw;text-align:center}
+.toast.ok{border-color:#43e97b;box-shadow:0 0 20px rgba(67,233,123,.35),0 8px 24px rgba(0,0,0,.45)}
+.toast.bad{border-color:#ff5566;box-shadow:0 0 20px rgba(255,85,102,.4),0 8px 24px rgba(0,0,0,.45)}
+.toast.info{border-color:#ffd60a;box-shadow:0 0 20px rgba(255,214,10,.3),0 8px 24px rgba(0,0,0,.45)}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(-20px) scale(.85)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-14px) scale(.9)}}
+
+/* ============ MODAL DE CONFIRMACIÓN BONITO ============ */
+#modal{position:fixed;inset:0;background:rgba(5,5,26,.7);display:none;
+  align-items:center;justify-content:center;padding:12px;z-index:60}
+#modalBox{background:var(--card);border-radius:16px;padding:22px;max-width:380px;width:100%;
+  text-align:center;animation:pop .3s cubic-bezier(.2,.9,.3,1.4);
+  box-shadow:0 12px 48px rgba(0,0,0,.5)}
+#modalBox .m-ico{font-size:44px;line-height:1;margin-bottom:6px}
+#modalBox h3{margin:4px 0}
+#modalBox p{opacity:.8;margin:8px 0 14px}
+.m-btns{display:flex;gap:8px;justify-content:center}
+
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
