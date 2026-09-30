@@ -4,8 +4,6 @@
 ![Sin frameworks](https://img.shields.io/badge/frameworks-ninguno-blue)
 ![Sin build](https://img.shields.io/badge/build-no%20requerido-success)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
-[![Licencia: MIT](https://shields.io)](https://opensource.org)
-
 
 Juego educativo para aprender los **112 verbos irregulares** más comunes del
 inglés, con la mecánica clásica de Pac-Man: comes la forma correcta del
