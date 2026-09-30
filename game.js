@@ -261,10 +261,14 @@ function menu(){
   if(hadGesture&&!musicUserOff)startMusic();
 }
 function refreshMenuStats(){
-  let b=0,g=0;
-  try{b=+localStorage.getItem("pv-best")||0;g=+localStorage.getItem("pv-games")||0;}catch(e){}
+  let b=0,br=0,g=0;
+  try{
+    b=+localStorage.getItem("pv-best")||0;
+    br=+localStorage.getItem("pv-best-rush")||0;   // récord aparte del modo Contrarreloj
+    g=+localStorage.getItem("pv-games")||0;
+  }catch(e){}
   const mast=VERBS.filter(v=>{const t=STATS[v.inf];return t&&t.s>=3&&!t.f;}).length;
-  const eb=$("best");if(eb)eb.textContent=b;
+  const eb=$("best");if(eb)eb.textContent=br>b?`${b} · ⏱${br}`:b;   // muestra los dos si el de rush es mejor
   const eg=$("games");if(eg)eg.textContent=g;
   const em=$("mast");if(em)em.textContent=mast+"/"+VERBS.length;
 }
@@ -330,12 +334,22 @@ function spawnBoss(){
 }
 
 function spawn(n){
-  const out=[];
-  for(const c of shuffle(FREE.slice())){
-    if(out.length===n)break;
-    if(md(c,S.pl)>=5&&[...out,...S.orbs,S.star||{c:-9,r:-9}].every(o=>md(c,o)>=4))out.push(c);
+  // Intenta con la separación ideal; si el mapa no tiene espacio suficiente
+  // (mapas más grandes, más objetos a la vez...), la relaja paso a paso.
+  // Así SIEMPRE se ubican las n casillas pedidas y nunca falta, por ejemplo,
+  // la pastilla con la respuesta correcta.
+  const all=shuffle(FREE.slice());
+  for(let gap=5;gap>=1;gap--){
+    const out=[];
+    for(const c of all){
+      if(out.length===n)break;
+      if(!out.includes(c)&&md(c,S.pl)>=gap&&
+         [...out,...S.orbs,S.star||{c:-9,r:-9}].every(o=>md(c,o)>=Math.max(gap-1,1)))out.push(c);
+    }
+    if(out.length===n)return out;
   }
-  return out;
+  // Último recurso (mapa saturado): cualquier casilla libre que no repita.
+  return all.slice(0,n);
 }
 
 function newQuestion(){
